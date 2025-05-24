@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  video_uploading:
+    build: ./Video_Uploading
+    ports:
+      - "5001:5001"
+    depends_on:
+      - auth_service
+      - mysql_db
+      - filesystem
+
+  video_streaming:
+    build: ./Video_Streaming
+    ports:
+      - "5002:5002"
+    depends_on:
+      - auth_service
+      - mysql_db
+      - filesystem
+  
+  filesystem: 
+    build: ./Filesystem 
+    ports:
+      - "5005:5005"
+    volumes:
+      - filesystem_data:/mnt/filesystem
+
+  auth_service:
+    build: ./Authentication
+    ports:
+      - "5000:5000"
+
+  mysql_db:
+    build: ./MySQL
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql_data:
+  filesystem_data: 

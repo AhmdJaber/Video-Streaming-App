@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Video Uploading App</title>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;  
+            align-items: center;  
+            height: 100vh;  
+            background-color: rgb(240, 239, 239);
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;  
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;  
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="file"] {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .upload_button {
+            background-color: rgb(240, 239, 239);
+            color: black;
+            padding: 12px 24px;  
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 18px; 
+            width: 80%;
+        }
+
+        .upload_button:hover {
+            background-color: rgb(228, 228, 228);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload a Video</h1>
+        <hr>
+        <br>
+        <form method="POST" action="http://localhost:5005/api/filesystem/download" enctype="multipart/form-data">
+            <input type="file" name="video" id="videoUpload" accept="video/*">
+            <br><br>
+            <input class="upload_button" type="submit" onclick="sendVideoName()">
+        </form>
+    </div>
+
+    <script>
+        async function sendVideoName(event) {
+            const input = document.getElementById('videoUpload');
+            const fileName = input.files[0] ? input.files[0].name : 'No file selected';
+            const vname = Date.now() + "_" + fileName; 
+            if (fileName != 'No file selected'){  
+                await fetch('/api/upload/save_video', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ videoName: vname })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }  
+            else {
+                alert("Can't upload emtpy video")
+            }
+        }
+    </script>
+</body>
+</html>

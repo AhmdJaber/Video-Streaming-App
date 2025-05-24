@@ -1,0 +1,8 @@
+FROM mysql:latest
+
+ENV MYSQL_ROOT_PASSWORD="1234578"
+ENV MYSQL_DATABASE="video_data"
+
+EXPOSE 3306
+
+CMD ["mysqld"]

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Streaming App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background-color: rgb(240, 239, 239);
+            margin: 0;
+        }
+        .container {
+            background-color: white; 
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%; 
+            max-width: 800px; 
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .video-list {
+            display: flex;
+            flex-direction: column; 
+            align-items: center; 
+            width: 100%;
+        }
+        .video-item {
+            margin: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            text-align: center;
+            width: 100%; 
+            max-width: 600px; 
+        }
+        video {
+            width: 100%; 
+            max-width: 600px; 
+            display: block; 
+            margin: 0 auto; 
+        }
+        .play-button {
+            background-color: rgb(240, 239, 239);
+            color: black;
+            padding: 12px 24px; 
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 18px; 
+            margin-top: 10px; 
+        }
+        .play-button:hover {
+            background-color: rgb(227, 227, 227);
+        }
+        #viewAll {
+            background-color: rgb(240, 239, 239);
+            color: black;
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 18px;
+            margin-top: 20px; 
+        }
+        #viewAll:hover {
+            background-color: rgb(227, 227, 227);
+        }
+        .button-container {
+            display: flex;
+            justify-content: center; 
+            margin-top: 20px; 
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Video Streaming App</h1>
+        <hr>
+        <br>
+        <div class="video-list" id="video-list"></div>
+        <div class="button-container">
+            <button id="viewAll" onclick="getListOfVideos()">View all videos</button>
+        </div>
+    </div>
+
+    <script>
+        async function getListOfVideos() {
+            try {
+                const response = await fetch('/api/stream/allVideos');
+                const videos = await response.json(); 
+                const videoListDiv = document.getElementById('video-list');
+                videos.forEach(video => {
+                    const videoItem = document.createElement('div');
+                    videoItem.classList.add('video-item');
+                    const videoTitle = document.createElement('h3');
+                    videoTitle.textContent = video.video_name; 
+                    videoItem.appendChild(videoTitle);
+                    const playButton = document.createElement('button');
+                    playButton.textContent = 'Play Video';
+                    playButton.classList.add('play-button');
+                    playButton.onclick = () => playVideo(video.video_url, videoItem); 
+                    videoItem.appendChild(playButton);
+                    videoListDiv.appendChild(videoItem);
+                });
+
+                document.getElementById("viewAll").style.display = "none"; 
+            } catch (error) {
+                console.error('Failed to load video list', error);
+            }
+        }
+        
+        function playVideo(videoUrl, videoItem) {
+            console.log("Playing video from URL:", videoUrl);
+            let video = videoItem.querySelector('video');
+            if (!video) {
+                video = document.createElement('video');
+                video.controls = true;
+                video.src = videoUrl; 
+                video.style.display = 'block';
+                videoItem.appendChild(video);
+            }
+            video.play();
+        }
+    </script>
+</body>
+
+</html>
